@@ -1,25 +1,49 @@
-// App Component
-import React, { useState } from 'react';
-import NewTaskForm from './NewTaskForm';
-import TaskList from './TaskList';
-import CategoryFilter from './CategoryFilter';
+import React, { useState } from "react";
+import CategoryFilter from "./CategoryFilter";
+import NewTaskForm from "./NewTaskForm";
+import TaskList from "./TaskList";
 
-import { CATEGORIES, TASKS } from '../data';
+import { CATEGORIES, TASKS } from "../data";
+
+// console.log("Here's the data you're working with");
+// console.log({ CATEGORIES, TASKS });
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [tasks, setTasks] = useState(TASKS);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  //tracks current state of tasks
+  const [taskList, setTaskList] = useState(() => TASKS);
+  //displays latest state from taskList
+  let [displayList, setDisplayList] = useState(() => TASKS);
 
-  const handleCategorySelect = (category) => {
+  //handle display of categories
+  function handleClickBtn(category) {
     setSelectedCategory(category);
-  };
+    const displayTasks =
+      category === "All"
+        ? taskList
+        : taskList.filter((task) => task.category === category);
+    setDisplayList(displayTasks);
+  }
 
-  const handleTaskFormSubmit = (taskData) => {
-    // Add a new task to the list with the text and category from the form
-    console.log('Hello', taskData);
-    setTasks([...tasks, taskData]);
-  };
-  console.log(tasks.length);
+  //handle delete of items on list
+  function handleDelete(id) {
+    setTaskList((prevTaskList) => {
+      const filteredList = prevTaskList.filter((_, index) => index !== id);
+      setDisplayList(filteredList);
+      return filteredList;
+    });
+    //setDisplayList(taskList);
+  }
+
+  //handle add item on list
+  function taskFormSubmit(formData) {
+    setTaskList((prevTaskList) => {
+      const updatedList = [...prevTaskList, formData];
+      setDisplayList(updatedList);
+      return updatedList;
+    });
+    //setDisplayList(taskList);
+  }
 
   return (
     <div className="App">
@@ -27,17 +51,10 @@ function App() {
       <CategoryFilter
         categories={CATEGORIES}
         selectedCategory={selectedCategory}
-        onCategorySelect={handleCategorySelect}
+        onHandleClickBtn={handleClickBtn}
       />
-      <NewTaskForm
-        categories={CATEGORIES}
-        onTaskFormSubmit={handleTaskFormSubmit}
-      />
-      <TaskList
-        tasks={tasks}
-        selectedCategory={selectedCategory}
-        setTasks={setTasks}
-      />
+      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={taskFormSubmit} />
+      <TaskList tasks={displayList} onHandleDelete={handleDelete} />
     </div>
   );
 }
