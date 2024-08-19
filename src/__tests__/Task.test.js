@@ -1,6 +1,6 @@
+import React from 'react'; // Added import
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
-import App from "../components/App";
 import Task from "../components/Task";
 
 test("displays the task text", () => {

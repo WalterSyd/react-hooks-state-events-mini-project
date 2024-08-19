@@ -1,11 +1,11 @@
 import React from "react";
 
-function Task({text, category, onDelete}) {
+function Task({category, text, callback}) {
   return (
     <div className="task">
       <div className="label">{category}</div>
       <div className="text">{text}</div>
-      <button className="delete" onClick={onDelete}>X</button>
+      <button onClick={()=> callback(category,text)} className="delete">X</button>
     </div>
   );
 }

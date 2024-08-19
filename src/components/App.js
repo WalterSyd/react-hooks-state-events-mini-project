@@ -5,56 +5,53 @@ import TaskList from "./TaskList";
 
 import { CATEGORIES, TASKS } from "../data";
 
-// console.log("Here's the data you're working with");
-// console.log({ CATEGORIES, TASKS });
+
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  //tracks current state of tasks
-  const [taskList, setTaskList] = useState(() => TASKS);
-  //displays latest state from taskList
-  let [displayList, setDisplayList] = useState(() => TASKS);
+  const [tasks , setTasks] = useState(TASKS);
+  const [addItem, setAddItem]= useState({
+    text: "",
+    category: ""
+  })
 
-  //handle display of categories
-  function handleClickBtn(category) {
-    setSelectedCategory(category);
-    const displayTasks =
-      category === "All"
-        ? taskList
-        : taskList.filter((task) => task.category === category);
-    setDisplayList(displayTasks);
+
+  const onChangeItem = (e)=>{
+    setAddItem({
+      ...addItem,
+      [e.target.name]: e.target.value
+    })
   }
 
-  //handle delete of items on list
-  function handleDelete(id) {
-    setTaskList((prevTaskList) => {
-      const filteredList = prevTaskList.filter((_, index) => index !== id);
-      setDisplayList(filteredList);
-      return filteredList;
-    });
-    //setDisplayList(taskList);
+  const onTaskFormSubmit = (e)=>{
+    e.preventDefault();
+    setTasks([...tasks, addItem]);
+    setAddItem({
+      text: "",
+      category: ""
+    })
   }
 
-  //handle add item on list
-  function taskFormSubmit(formData) {
-    setTaskList((prevTaskList) => {
-      const updatedList = [...prevTaskList, formData];
-      setDisplayList(updatedList);
-      return updatedList;
-    });
-    //setDisplayList(taskList);
+
+  function onClickFilter(e) {
+    const category = e.target.name;
+    e.target.className == "selected"? e.target.className ="" : e.target.className = "selected";
+    if (category === "All") {
+      return setTasks(TASKS);
+    }
+  
+    return setTasks(TASKS.filter((task)=> task.category === category))
   }
+
+
+
+
 
   return (
     <div className="App">
       <h2>My tasks</h2>
-      <CategoryFilter
-        categories={CATEGORIES}
-        selectedCategory={selectedCategory}
-        onHandleClickBtn={handleClickBtn}
-      />
-      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={taskFormSubmit} />
-      <TaskList tasks={displayList} onHandleDelete={handleDelete} />
+      <CategoryFilter categories={CATEGORIES} callback={onClickFilter}/>
+      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={onTaskFormSubmit} addItem={addItem} onChangeItem={onChangeItem}  />
+      <TaskList tasks={tasks} setTasks={setTasks}/>
     </div>
   );
 }

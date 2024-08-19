@@ -1,23 +1,10 @@
-import React, { useState }from "react";
-import {CATEGORIES, TASKS} from "../data";
+import React from "react";
 
-function CategoryFilter({setTasks}) {
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const handleCategorySelection = (category) => {
-    setSelectedCategory(category);
-    setTasks(
-      category === "All" ? TASKS : TASKS.filter((task) => task.category === category)
-    )
-  }
+function CategoryFilter({categories, callback}) {
   return (
     <div className="categories">
       <h5>Category filters</h5>
-      {CATEGORIES.map((category) => (
-        <button
-          key={category}
-          className={category === selectedCategory ? "selected" : ""}
-          onClick={() => handleCategorySelection(category)}>{category}</button>
-      ))}
+      {categories.map((category) => <button key={category} onClick={callback} name={category}>{category}</button>)}
     </div>
   );
 }
